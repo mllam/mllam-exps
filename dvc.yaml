@@ -1,3 +1,6 @@
+vars: # parameters that should not be tracked
+  - experiment: has_hidden_dim
+  - logger: mlflow
 stages:
   mllam_version:
     cmd: source machines/environment.sh; python -c "from neural_lam import __version__; print(__version__)" > version.mllam.txt
@@ -8,30 +11,17 @@ stages:
     outs:
     - data/datastore.zarr
   create_graph-slurm:
-    cmd: python -m neural_lam.create_graph --config_path data/config.yaml --name 1level
-      --levels 1
+    cmd: python -m neural_lam.create_graph --config_path data/config.yaml ${graph-defaults}
     params:
     - data/config.yaml:
       - datastore
     deps:
-    - data/datastore.zarr
+    - data/datastore.yaml
     outs:
     - data/graph/
   train:
     cmd:
-    - sbatch -W machines/slurm.train.sh --config_path ./data/config.yaml --logger mlflow --logger_project has_hidden_dim
-    params:
-    - data/training_params.yaml:
-      - model
-      - graph
-      - epochs
-      - batch_size
-      - hidden_dim
-      - processor_layers
-      - metrics_watch
-      - num_workers
-      - num_nodes
-      - val_steps_to_log
+    - sbatch -W ${slurm-defaults} machines/slurm.train.sh --config_path ./data/config.yaml --logger ${logger} --logger_project ${experiment} ${baseline-defaults}
     deps:
     - version.mllam.txt
     - data/graph/
@@ -41,21 +31,8 @@ stages:
     - saved_models
   evaluate:
     cmd:
-    - sbatch -W --nodes 1 machines/slurm.train.sh --config_path ./data/config.yaml --eval val --load
-      ./saved_models/*/last.ckpt --logger mlflow --logger_project has_hidden_dim
-    params:
-    - data/evaluate_params.yaml:
-      - model
-      - graph
-      - epochs
-      - batch_size
-      - hidden_dim
-      - num_workers
-      - processor_layers
-      - metrics_watch
-      - val_steps_to_log
-      - num_nodes
-      - ar_steps_eval
+    - sbatch -W ${slurm-defaults} --nodes 1 machines/slurm.train.sh --config_path ./data/config.yaml --eval val --load
+      ./saved_models/*/last.ckpt --logger mlflow --logger_project ${experiment} ${baseline-defaults}
     deps:
     - version.mllam.txt
     - data/graph/

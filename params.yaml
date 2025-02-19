@@ -1,0 +1,32 @@
+graph-defaults:
+  model: &graph_model graph_lam
+  level: 4
+
+baseline-defaults:  # defaults across training and evaluation stage
+  num_workers: 8 
+  batch_size: 1
+  hidden_dim: 128
+  processor_layers: 4
+  model: *graph_model
+  graph: hierarchical
+  epochs: 30
+  ar_steps_train: 1
+  lr: 0.001
+  val_interval: 1
+  ar_steps_eval: 4
+  val_steps_to_log:
+    - 1
+    - 2
+    - 4
+  metrics_watch: val_rmse, mse, random_metric
+  num_nodes: &num_nodes 2
+
+slurm-defaults:
+  job-name: NeuralLam
+  time: 1-00:00:00
+  nodes: *num_nodes
+  ntasks-per-node: 8
+  gres: gpu:8  #per node
+  no-requeue: true
+  exclusive: true
+  account: cu_0003
