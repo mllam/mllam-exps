@@ -2,12 +2,12 @@ stages:
   mllam_version:
     cmd: source machines/environment.sh; python -c "from neural_lam import __version__; print(__version__)" > version.mllam.txt
   prepare_dataset:
-    cmd: python -m mllam_data_prep data/datastore.yaml --output data/datastore.zarr
+    cmd: sbatch -W machines/slurm.mllam-data-prep.sh data/datastore.yaml --output data/datastore.zarr
     deps:
     - data/datastore.yaml
     outs:
     - data/datastore.zarr
-  create_graph-slurm:
+  create_graph:
     cmd: python -m neural_lam.create_graph --config_path data/config.yaml --name 1level
       --levels 1
     params:
@@ -19,7 +19,7 @@ stages:
     - data/graph/
   train:
     cmd:
-    - sbatch -W machines/slurm.train.sh --config_path ./data/config.yaml --logger mlflow --logger_project has_hidden_dim
+    - sbatch -W machines/slurm.train-neural-lam.sh --config_path ./data/config.yaml --logger mlflow --logger_project neural_lam
     params:
     - data/training_params.yaml:
       - model
@@ -41,8 +41,8 @@ stages:
     - saved_models
   evaluate:
     cmd:
-    - sbatch -W --nodes 1 machines/slurm.train.sh --config_path ./data/config.yaml --eval val --load
-      ./saved_models/*/last.ckpt --logger mlflow --logger_project has_hidden_dim
+    - sbatch -W --nodes 1 machines/slurm.train-neural-lam.sh --config_path ./data/config.yaml --eval val --load
+      ./saved_models/*/last.ckpt --logger mlflow --logger_project neural_lam
     params:
     - data/evaluate_params.yaml:
       - model
