@@ -1,5 +1,5 @@
 schema_version: v0.6.0
-dataset_version: v0.1.0
+dataset_version: v1.0.0
 
 output:
   variables:
@@ -141,3 +141,5 @@ extra:
       globe:
         semimajor_axis: 6367470.0
         semiminor_axis: 6367470.0
+  global_attributes:
+     title: A-baseline
