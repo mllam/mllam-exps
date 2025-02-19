@@ -1,7 +1,7 @@
 graph-defaults:
   levels: 4
   hierarchical: true
-  name: hi4
+  name: hierarchical
 
 baseline-defaults:  # defaults across training and evaluation stage
   num_workers: 8 
