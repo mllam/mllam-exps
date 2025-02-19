@@ -143,3 +143,9 @@ extra:
         semiminor_axis: 6367470.0
   global_attributes:
      title: Baseline A
+     comment: >
+      This is our first baseline experiment setup. It was created to be 
+      reasonably fast for training, give reasonable model skill (for the 
+      first roll-out step) and leave GPU RAM space (with the 80GB cards 
+      we are using) to allow for experimentation in terms of adding 
+      variables, levels, increasing size of hidden dimension, etc.
