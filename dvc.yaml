@@ -8,8 +8,7 @@ stages:
     outs:
     - data/datastore.zarr
   create_graph:
-    cmd: python -m neural_lam.create_graph --config_path data/config.yaml --name 1level
-      --levels 1
+    cmd: python -m neural_lam.create_graph --config_path data/config.yaml --name hi4 --levels 4 --hierarchical
     params:
     - data/config.yaml:
       - datastore
