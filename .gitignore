@@ -4,3 +4,4 @@ wandb/
 /saved_models
 data/datastore.zarr
 data/training
+machines/secrets.sh

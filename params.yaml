@@ -1,13 +1,14 @@
 graph-defaults:
-  model: &graph_model graph_lam
-  level: 4
+  levels: 4
+  hierarchical: true
+  name: hi4
 
 baseline-defaults:  # defaults across training and evaluation stage
   num_workers: 8 
   batch_size: 1
   hidden_dim: 128
   processor_layers: 4
-  model: *graph_model
+  model: hi_lam
   graph: hierarchical
   epochs: 30
   ar_steps_train: 1

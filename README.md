@@ -2,8 +2,11 @@
 
 This repository contains a [DVC](dvc.org) pipeline to train, reproduce and share experiments for the Neural-LAM project.
 
+>[!Warning]
+>This package is still under heavy development and currently has also a tendency to be geared towards a specific HPC environment.
+
 ## Design
-Pipelines consist of several stages, each stage describing a single step in the experiment process. Main stages for an ML experiment consist
+Pipelines consist of several stages, each stage describes a single step in the experiment process. Main stages for an ML experiment consist
 typically of data preparation, model training, evaluation and inference. These stages are defined in the `dvc.yaml` file. For the Neural-LAM
 project, the main stages are _prepare dataset_, _create graph_, _train_, _evaluate_. The stages are linked by dependencies (`deps`) and outputs (`out`).
 DVC automatically tracks the dependencies and outputs and only runs stages that have been updated. In the background DVC uses git for these purposes.
@@ -13,7 +16,7 @@ particularly in `data/training_params.yaml` and `data/evaluate_params.yaml`.
 Generally, experiments can be run with `dvc exp run`, but since we need to schedule our experiments with SLURM and DVC relies on being called
 after a job has been finished to calculate the checksums, we need to do some hacks:
 
-1. Use `sbatch -W` in the `cmd` field of the stage to return to DVC only after the model task has been finished.
+1. Use `sbatch -W` in the `cmd` field of the stage to return to DVC only after the model tasks has been finished.
 2. Use a tmux session to run DVC in the background and let it wait for the job to finish.
 3. Use wrapper scripts to ingest SLURM environment variables and setups.
 
@@ -31,6 +34,7 @@ mllam-exps
 ├── logs  # log files from SLURM jobs
 ├── machines  # machine configurations for the Neural-LAM project
 │   ├── environment.sh  # source environment incl. python modules
+│   ├── secrets.sh  # file containing some user specific secrets (DO NOT COMMIT!)
 │   └── slurm.evaluate.sh  # SLURM wrapper script for evaluation
 ├── dvc.lock  # lock file for DVC containing checksums for the latest stages
 ├── dvc.yaml  # DVC pipeline definition
@@ -43,6 +47,14 @@ To setup DVC, DVC needs to be installed:
 ```bash
 pip install dvc --target packages_dvc
 export PYTHONPATH=packages_dvc:$PYTHONPATH
+```
+
+To be able to track experiments with MLflow, add your username and password to the file machines/secrets.sh:
+```
+#!/bin/bash
+export MLFLOW_TRACKING_USERNAME=""
+export MLFLOW_TRACKING_PASSWORD=""
+#empty line
 ```
 
 ### Sharing experiments and data
@@ -108,16 +120,3 @@ dvc queue start
 
 This will run the training stage with different hidden dimensions. The `--queue` option will create a sequence of experiments that
 are defined by changing the parameters on-the-fly defined in e.g. `data/training_params.yaml` with the `-S` option.
-
-## Patches
-
-Some tweaks are necessary to make DVC work with the Neural-LAM project.
-
-### Deactive hyperparameter logging
-The hyperparameter logging does not work as the NeuralLAMConfig objects cannot be serialized with ruamel.yaml by default.
-Therefore the logging of hyperparameters has been removed from `.../site-packages/pytorch_lightning/trainer/trainer.py`:
-
-```suggestion
-- _log_hyperparams(self)
-+ # _log_hyperparams(self)
-```

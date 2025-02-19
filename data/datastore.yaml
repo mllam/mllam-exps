@@ -1,15 +1,14 @@
-schema_version: v0.5.0
-dataset_version: v0.1.0
+schema_version: v0.6.0
+dataset_version: v1.0.0
 
 output:
   variables:
     static: [grid_index, static_feature]
     state: [time, grid_index, state_feature]
-    forcing: [time, grid_index, forcing_feature]
   coord_ranges:
     time:
-      start: 1991-01-01T00:00
-      end: 2001-01-01T00:00
+      start: 2013-11-01T00:00
+      end: 2017-11-01T00:00
       step: PT3H
   chunking:
     time: 1
@@ -17,60 +16,48 @@ output:
     dim: time
     splits:
       train:
-        start: 1991-01-01T00:00
-        end: 1999-01-01T00:00
+        start: 2013-11-01T00:00
+        end: 2015-10-16T00:00
         compute_statistics:
           ops: [mean, std, diff_mean, diff_std]
           dims: [grid_index, time]
       val:
-        start: 1999-01-01T00:00
-        end: 2000-01-01T00:00
+        start: 2015-10-24T00:00
+        end: 2016-10-24T00:00
       test:
-        start: 2000-01-01T00:00
-        end: 2001-01-01T00:00
+        start: 2016-11-01T00:00
+        end: 2017-11-01T00:00
 
 inputs:
   danra_surface:
     path: /dcai/projects/cu_0003/data/sources/danra/v0.5.0/single_levels.zarr
     dims: [time, x, y]
     variables:
+      - pres_seasurface
       - t2m
       - u10m
       - v10m
+      - r2m
     dim_mapping:
       time:
         method: rename
         dim: time
+      grid_index:
+        method: stack
+        dims: [x, y]
       state_feature:
         method: stack_variables_by_var_name
         name_format: "{var_name}"
-      grid_index:
-        method: stack
-        dims: [x, y]
     target_output_variable: state
   
-  danra_surface_forcing:
-    path: /dcai/projects/cu_0003/data/sources/danra/v0.5.0/single_levels.zarr
-    dims: [time, x, y]
-
-    derived_variables:
-      # derive variables to be used as forcings
-      toa_radiation:
-        kwargs:
-          time: ds_input.time
-          lat: ds_input.lat
-          lon: ds_input.lon
-        function: mllam_data_prep.ops.derive_variable.physical_field.calculate_toa_radiation
-      hour_of_day_sin:
-        kwargs:
-          time: ds_input.time
-          component: sin
-        function: mllam_data_prep.ops.derive_variable.time_components.calculate_hour_of_day
-      hour_of_day_cos:
-        kwargs:
-          time: ds_input.time
-          component: cos
-        function: mllam_data_prep.ops.derive_variable.time_components.calculate_hour_of_day
+  danra_pressure_levels_z:
+    path: /dcai/projects/cu_0003/data/sources/danra/v0.5.0/pressure_levels.zarr
+    dims: [pressure, time, x, y]
+    variables:
+      z:
+        pressure:
+          values: [500,]
+          units: hPa
     dim_mapping:
       time:
         method: rename
@@ -78,14 +65,60 @@ inputs:
       grid_index:
         method: stack
         dims: [x, y]
-      forcing_feature:
+      state_feature:
         method: stack_variables_by_var_name
-        name_format: "{var_name}"
-    target_output_variable: forcing
+        dims: [pressure]
+        name_format: "{var_name}{pressure}hPa"
+    target_output_variable: state
+  
+  danra_pressure_levels_r:
+    path: /dcai/projects/cu_0003/data/sources/danra/v0.5.0/pressure_levels.zarr
+    dims: [pressure, time, x, y]
+    variables:
+      r:
+        pressure:
+          values: [700,]
+          units: hPa
+    dim_mapping:
+      time:
+        method: rename
+        dim: time
+      grid_index:
+        method: stack
+        dims: [x, y]
+      state_feature:
+        method: stack_variables_by_var_name
+        dims: [pressure]
+        name_format: "{var_name}{pressure}hPa"
+    target_output_variable: state
 
+  danra_pressure_levels_windvector:
+    path: /dcai/projects/cu_0003/data/sources/danra/v0.5.0/pressure_levels.zarr
+    dims: [pressure, time, x, y]
+    variables:
+      u:
+        pressure:
+          values: [850,]
+          units: hPa
+      v:
+        pressure:
+          values: [850,]
+          units: hPa
+    dim_mapping:
+      time:
+        method: rename
+        dim: time
+      grid_index:
+        method: stack
+        dims: [x, y]
+      state_feature:
+        method: stack_variables_by_var_name
+        dims: [pressure]
+        name_format: "{var_name}{pressure}hPa"
+    target_output_variable: state
 
   danra_lsm:
-    path: /dcai/projects/cu_0003/data/sources/danra/v0.4.0/lsm.zarr
+    path: /dcai/projects/cu_0003/data/sources/danra/v0.5.0/single_levels.zarr
     dims: [x, y]
     variables:
       - lsm
@@ -108,3 +141,11 @@ extra:
       globe:
         semimajor_axis: 6367470.0
         semiminor_axis: 6367470.0
+  global_attributes:
+     title: Baseline A
+     comment: >
+      This is our first baseline experiment setup. It was created to be 
+      reasonably fast for training, give reasonable model skill (for the 
+      first roll-out step) and leave GPU RAM space (with the 80GB cards 
+      we are using) to allow for experimentation in terms of adding 
+      variables, levels, increasing size of hidden dimension, etc.
