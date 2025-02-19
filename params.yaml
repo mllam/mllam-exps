@@ -1,5 +1,7 @@
-# the name that your experiment will be grouped under on mlflow
-experiment_name: A-baseline
+# the name of the "experiment" on mlflow that your run(s) will be grouped under
+# change this to something that describes what you'll be working on (for
+# example what the parameter study is about)
+logger_project: A-baseline
 
 # change this to the path of the virtual environment where you have installed
 # neural-lam and dependencies (creating the venv might become part of the dvc
