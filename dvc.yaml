@@ -23,17 +23,17 @@ stages:
     params:
     - params.yaml:
       - experiment_name
-      - num_nodes
       - model
       - graph
       - hidden_dim
       - processor_layers
       - metrics_watch
-      - val_steps_to_log
     - data/training_params.yaml:
-      - epochs
-      - batch_size
       - num_nodes
+      - batch_size
+      - epochs
+      - val_steps_to_log
+      - ar_steps_eval
     deps:
     - version.mllam.txt
     - data/graph/
@@ -54,7 +54,6 @@ stages:
       - hidden_dim
       - processor_layers
       - metrics_watch
-      - val_steps_to_log
     - data/evaluate_params.yaml:
       - epochs
       - batch_size
