@@ -1,13 +1,4 @@
-model: graph_lam
-graph: 1level
-epochs: 30
 batch_size: 1
-hidden_dim: 16
-processor_layers: 2
-metrics_watch: val_rmse, mse, random_metric
-logger: mlflow
 num_workers: 8 
+epochs: 10
 num_nodes: 1
-val_interval: 5
-lr: 0.001
-val_steps_to_log: 5
