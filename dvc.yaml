@@ -1,12 +1,14 @@
 stages:
   mllam_version:
-    cmd: source machines/environment.sh; python -c "from neural_lam import __version__; print(__version__)" > version.mllam.txt
+    cmd: ${venv_path}/python -c "from neural_lam import __version__; print(__version__)" > version.mllam.txt
+
   prepare_dataset:
-    cmd: python -m mllam_data_prep data/datastore.yaml --output data/datastore.zarr
+    cmd: ${venv_path}/bin/python -m mllam_data_prep data/datastore.yaml --output data/datastore.zarr
     deps:
     - data/datastore.yaml
     outs:
     - data/datastore.zarr
+
   create_graph-slurm:
     cmd: python -m neural_lam.create_graph --config_path data/config.yaml --name 1level
       --levels 1
@@ -17,6 +19,7 @@ stages:
     - data/datastore.zarr
     outs:
     - data/graph/
+
   train:
     cmd:
     - sbatch -W machines/slurm.train.sh --config_path ./data/config.yaml --logger mlflow --logger_project ${experiment_name}

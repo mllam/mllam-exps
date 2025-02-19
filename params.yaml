@@ -1,6 +1,10 @@
 # the name that your experiment will be grouped under on mlflow
 experiment_name: A-baseline
 
+# change this to the path of the virtual environment where you have installed
+# neural-lam and dependencies
+vevn_path: 
+
 # default parameters for training and eval
 model: graph_lam
 graph: 1level
