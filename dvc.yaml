@@ -16,7 +16,7 @@ stages:
     - data/config.yaml:
       - datastore
     deps:
-    - data/datastore.yaml
+    - data/datastore.zarr
     outs:
     - data/graph/
   train:
