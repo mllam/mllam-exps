@@ -1,6 +1,6 @@
 stages:
   mllam_version:
-    cmd: ${venv_path}/python -c "from neural_lam import __version__; print(__version__)" > version.mllam.txt
+    cmd: ${venv_path}/bin/python -c "from neural_lam import __version__; print(__version__)" > version.mllam.txt
 
   prepare_dataset:
     cmd: ${venv_path}/bin/python -m mllam_data_prep data/datastore.yaml --output data/datastore.zarr
@@ -9,8 +9,8 @@ stages:
     outs:
     - data/datastore.zarr
 
-  create_graph-slurm:
-    cmd: python -m neural_lam.create_graph --config_path data/config.yaml --name 1level
+  create_graph:
+    cmd: ${venv_path}/bin/python -m neural_lam.create_graph --config_path data/config.yaml --name 1level
       --levels 1
     params:
     - data/config.yaml:
@@ -22,7 +22,7 @@ stages:
 
   train:
     cmd:
-    - sbatch -W machines/slurm.train.sh --config_path ./data/config.yaml --logger mlflow --logger_project ${experiment_name}
+    - sbatch -W machines/slurm.train.sh --config_path ./data/config.yaml --logger mlflow --logger_project ${experiment_name} --venv_path ${venv_path}
     params:
     - params.yaml:
       - experiment_name
@@ -47,7 +47,7 @@ stages:
   evaluate:
     cmd:
     - sbatch -W --nodes 1 machines/slurm.train.sh --config_path ./data/config.yaml --eval val --load
-      ./saved_models/*/last.ckpt --logger mlflow --logger_project ${experiment_name}
+      ./saved_models/*/last.ckpt --logger mlflow --logger_project ${experiment_name} --venv_path ${venv_path}
     params:
     - params.yaml:
       - experiment_name

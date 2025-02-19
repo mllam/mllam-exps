@@ -1,6 +1,6 @@
 num_nodes: 2
 batch_size: 1
 num_workers: 8 
-epochs: 10
+epochs: 1
 ar_steps_eval: 4
-val_steps_to_log: "1, 2, 3, 4"
+val_steps_to_log: "1 2 3 4"
