@@ -1,7 +1,15 @@
 # This file contains parameters that are tracked by DVC.
 # 
 # Notes:
-# - YAML anchor (`&<alias>`) and aliases (`*<alias>`) are used to set parameters only once
+# - YAML anchor (`&<alias>`) and aliases (`*<alias>`) can be used to define an "anchor"-value that can aliased (referenced) somewhere else in the yaml-file, thereby avoiding the need to repeat the definition of a variable in multiple places, .e.g.
+
+graph-defaults:
+   name: &graph_name hierarchical_4lvl
+
+defines an anchor `graph_name` with value `hierarchical_4lvl` that can then be reference elsewhere in the yaml-file with `*graph_name`, e.g.:
+
+baseline-defaults:
+   graph: *graph_name
 #     and ommit redundancy
 # - YAML overwrites (`<<: *<alias>`) are used to insert default parameters into specific
 #     parameter sections and overwrite specific keys there
