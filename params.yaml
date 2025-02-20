@@ -2,19 +2,6 @@
 # 
 # Notes:
 # - YAML anchor (`&<alias>`) and aliases (`*<alias>`) can be used to define an "anchor"-value that can aliased (referenced) somewhere else in the yaml-file, thereby avoiding the need to repeat the definition of a variable in multiple places, .e.g.
-
-# the name of the "experiment" on mlflow that your run(s) will be grouped under
-# change this to something that describes what you'll be working on (for
-# example what the parameter study is about)
-logger_project: A-baseline
-
-graph-defaults:
-   name: &graph_name hierarchical_4lvl
-
-defines an anchor `graph_name` with value `hierarchical_4lvl` that can then be reference elsewhere in the yaml-file with `*graph_name`, e.g.:
-
-baseline-defaults:
-   graph: *graph_name
 #     and ommit redundancy
 # - YAML overwrites (`<<: *<alias>`) are used to insert default parameters into specific
 #     parameter sections and overwrite specific keys there
@@ -22,10 +9,16 @@ baseline-defaults:
 #     resulting in each key being prepended with `--` making it possible to pass them as
 #     command line arguments to neural-lam
 #     (https://dvc.org/doc/user-guide/project-structure/dvcyaml-files#dictionary-unpacking)
+
+# the name of the "experiment" on mlflow that your run(s) will be grouped under
+# change this to something that describes what you'll be working on (for
+# example what the parameter study is about)
+logger_project: A-baseline
+
 graph-defaults:
   levels: 4
   hierarchical: true
-  name: &graph_name hierarchical_4lvl
+  name: &graph_name hierarchical_4lvl  # defines an anchor `graph_name` with value `hierarchical_4lvl` that can then be reference elsewhere in the yaml-file with `*graph_name`
 
 baseline-defaults: &baseline-defaults  # defaults across training and evaluation stage, which get passed to python -m neural_lam.train_model
   num_workers: 8 
