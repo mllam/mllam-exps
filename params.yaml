@@ -1,9 +1,20 @@
+# This file contains parameters that are tracked by DVC.
+# 
+# Notes:
+# - YAML anchor (`&<alias>`) and aliases (`*<alias>`) are used to set parameters only once
+#     and ommit redundancy
+# - YAML overwrites (`<<: *<alias>`) are used to insert default parameters into specific
+#     parameter sections and overwrite specific keys there
+# - Parameters set in this file are unpacked in `dvc.yaml` with e.g. ${baseline-defaults}
+#     resulting in each key being prepended with `--` making it possible to pass them as
+#     command line arguments to neural-lam
+#     (https://dvc.org/doc/user-guide/project-structure/dvcyaml-files#dictionary-unpacking)
 graph-defaults:
   levels: 4
   hierarchical: true
   name: &graph_name hierarchical_4lvl
 
-baseline-defaults: &baseline-defaults  # defaults across training and evaluation stage
+baseline-defaults: &baseline-defaults  # defaults across training and evaluation stage, which get passed to python -m neural_lam.train_model
   num_workers: 8 
   batch_size: 1
   hidden_dim: 128
