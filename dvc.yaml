@@ -3,11 +3,10 @@
 #  training or evaluation of the model, e.g. which logger
 #  has been used.
 vars:
-  - experiment: has_testing
   - logger: mlflow
 stages:
   mllam_version:
-    cmd: source machines/environment.sh; python -c "from neural_lam import __version__; print(__version__)" > version.mllam.txt
+    cmd: ${venv_path}/bin/python -c "from neural_lam import __version__; print(__version__)" > version.mllam.txt
   prepare_dataset:
     cmd: sbatch -W machines/slurm.mllam-data-prep.sh data/datastore.yaml --output data/datastore.zarr
     deps:
@@ -15,7 +14,7 @@ stages:
     outs:
     - data/datastore.zarr
   create_graph:
-    cmd: python -m neural_lam.create_graph --config_path data/config.yaml ${graph-defaults}
+    cmd: ${venv_path}/bin/python -m neural_lam.create_graph --config_path data/config.yaml ${graph-defaults}
     params:
     - data/config.yaml:
       - datastore
@@ -25,7 +24,7 @@ stages:
     - data/graph/
   train:
     cmd:
-    - sbatch -W ${slurm-defaults} machines/slurm.train.sh --config_path ./data/config.yaml --logger ${logger} --logger_project ${experiment} ${baseline-defaults}
+    - VENV_PATH=${venv_path} sbatch -W ${slurm-defaults} machines/slurm.train.sh --config_path ./data/config.yaml --logger ${logger} --logger_project ${logger_project} ${baseline-defaults}
     deps:
     - version.mllam.txt
     - data/graph/
@@ -35,8 +34,8 @@ stages:
     - saved_models
   evaluate:
     cmd:
-    - sbatch -W ${slurm-eval} machines/slurm.train.sh --config_path ./data/config.yaml --eval val --load
-      ./saved_models/*/last.ckpt --logger mlflow --logger_project ${experiment} ${baseline-eval}
+    - VENV_PATH=${venv_path} sbatch -W ${slurm-eval} machines/slurm.train.sh --config_path ./data/config.yaml --eval val --load
+      ./saved_models/*/last.ckpt --logger mlflow --logger_project ${logger_project} ${baseline-eval}
     deps:
     - version.mllam.txt
     - data/graph/

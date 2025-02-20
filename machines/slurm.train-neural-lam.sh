@@ -1,6 +1,4 @@
 #!/bin/bash -l
-#SBATCH --output=/dcai/users/%u/logs/neurallam.%j.log
-#SBATCH --error=/dcai/users/%u/logs/neurallam.%j.log
 
 echo "Started slurm job $SLURM_JOB_ID"
 
@@ -24,4 +22,10 @@ OMP_NUM_THREADS=56
 OMPI_MCA_coll_hcoll_enable=0
 set +a
 
-srun -ul python neural_lam.train_model "$@"
+echo "Using venv in ${VENV_PATH}"
+
+# source the virtual environment so that the python script can be run
+source ${VENV_PATH}/bin/activate
+
+# pass all arguments to the python script
+srun -ul python train_wrapper.py "$@"

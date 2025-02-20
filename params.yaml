@@ -9,6 +9,19 @@
 #     resulting in each key being prepended with `--` making it possible to pass them as
 #     command line arguments to neural-lam
 #     (https://dvc.org/doc/user-guide/project-structure/dvcyaml-files#dictionary-unpacking)
+#     
+
+# the name of the "experiment" on mlflow that your run(s) will be grouped under
+# change this to something that describes what you'll be working on (for
+# example what the parameter study is about)
+logger_project: A-baseline
+
+# change this to the path of the virtual environment where you have installed
+# neural-lam and dependencies (creating the venv might become part of the dvc
+# pipeline in future, but for now you have to do this manually)
+venv_path: /dcai/users/schhau/git-repos/neural-lam/.venv/
+
+
 graph-defaults:
   levels: 4
   hierarchical: true
