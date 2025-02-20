@@ -1,6 +1,6 @@
 #!/bin/bash -l
 #SBATCH --job-name=mllam-data-prep
-#SBATCH --time=1:00:00
+#SBATCH --time=5:00:00
 #SBATCH --ntasks=1
 #SBATCH --gpus=1
 #SBATCH --account=cu_0003
