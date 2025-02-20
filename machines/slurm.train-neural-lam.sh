@@ -10,6 +10,11 @@
 #SBATCH --account=cu_0003
 #SBATCH --output=/dcai/users/schhau/git-repos/mllam-exps/logs/neurallam.%j.log
 #SBATCH --error=/dcai/users/schhau/git-repos/mllam-exps/logs/neurallam.%j.log
+#SBATCH --chdir=/dcai/users/%u/logs
+
+# chdir in the slurm directive is to make sure the gpu stats file is saved there
+# Then we cd to the actual working directory
+cd ${DVC_TEMP_DIR}
 
 echo "Started slurm job $SLURM_JOB_ID"
 

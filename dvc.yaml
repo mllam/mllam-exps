@@ -18,7 +18,7 @@ stages:
     - data/graph/
   train:
     cmd:
-    - sbatch -W machines/slurm.train-neural-lam.sh --config_path ./data/config.yaml --logger mlflow --logger_project neural_lam
+    - DVC_TEMP_DIR=$(pwd); sbatch -W machines/slurm.train-neural-lam.sh --config_path ./data/config.yaml --logger mlflow --logger_project neural_lam
     params:
     - data/training_params.yaml:
       - model
