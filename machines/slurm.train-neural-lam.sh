@@ -1,6 +1,6 @@
 #!/bin/bash -l
-#SBATCH --output=/dcai/users/${USER}/git-repos/mllam-exps/logs/neurallam.%j.log
-#SBATCH --error=/dcai/users/${USER}/git-repos/mllam-exps/logs/neurallam.%j.log
+#SBATCH --output=/dcai/users/%u/logs/neurallam.%j.log
+#SBATCH --error=/dcai/users/%u/logs/neurallam.%j.log
 
 echo "Started slurm job $SLURM_JOB_ID"
 
