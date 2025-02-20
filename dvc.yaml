@@ -35,8 +35,8 @@ stages:
     - saved_models
   evaluate:
     cmd:
-    - sbatch -W ${slurm-eval} machines/slurm.train.sh --config_path ./data/config.yaml --eval val --load
-      ./saved_models/*/last.ckpt --logger mlflow --logger_project ${experiment} ${baseline-eval}
+    - sbatch -W ${slurm-eval} machines/slurm.train-neural-lam.sh --config_path ./data/config.yaml --eval val --load
+      ./saved_models/*/last.ckpt --logger ${logger} --logger_project ${experiment} ${baseline-eval}
     deps:
     - version.mllam.txt
     - data/graph/
