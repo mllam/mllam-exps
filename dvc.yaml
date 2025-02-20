@@ -1,4 +1,5 @@
-vars: # parameters that should not be tracked
+# dvc parameters listed under `vars` will not be tracked
+vars:
   - experiment: has_testing
   - logger: mlflow
 stages:
