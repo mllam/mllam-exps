@@ -3,6 +3,11 @@
 # Notes:
 # - YAML anchor (`&<alias>`) and aliases (`*<alias>`) can be used to define an "anchor"-value that can aliased (referenced) somewhere else in the yaml-file, thereby avoiding the need to repeat the definition of a variable in multiple places, .e.g.
 
+# the name of the "experiment" on mlflow that your run(s) will be grouped under
+# change this to something that describes what you'll be working on (for
+# example what the parameter study is about)
+logger_project: A-baseline
+
 graph-defaults:
    name: &graph_name hierarchical_4lvl
 

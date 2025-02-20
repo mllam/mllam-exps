@@ -3,7 +3,6 @@
 #  training or evaluation of the model, e.g. which logger
 #  has been used.
 vars:
-  - experiment: has_testing
   - logger: mlflow
 stages:
   mllam_version:
@@ -25,7 +24,7 @@ stages:
     - data/graph/
   train:
     cmd:
-    - sbatch -W ${slurm-defaults} machines/slurm.train-neural-lam.sh --config_path ./data/config.yaml --logger ${logger} --logger_project ${experiment} ${baseline-defaults}
+    - sbatch -W ${slurm-defaults} machines/slurm.train-neural-lam.sh --config_path ./data/config.yaml --logger ${logger} ${logger_project} ${baseline-defaults}
     deps:
     - version.mllam.txt
     - data/graph/
@@ -36,7 +35,7 @@ stages:
   evaluate:
     cmd:
     - sbatch -W ${slurm-eval} machines/slurm.train-neural-lam.sh --config_path ./data/config.yaml --eval val --load
-      ./saved_models/*/last.ckpt --logger ${logger} --logger_project ${experiment} ${baseline-eval}
+      ./saved_models/*/last.ckpt --logger ${logger} ${logger_project} ${baseline-eval}
     deps:
     - version.mllam.txt
     - data/graph/
