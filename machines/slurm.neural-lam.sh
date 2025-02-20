@@ -24,4 +24,4 @@ OMP_NUM_THREADS=56
 OMPI_MCA_coll_hcoll_enable=0
 set +a
 
-srun -ul python neural_lam.train_model "$@"
+srun -ul python -m neural_lam.train_model "$@"
