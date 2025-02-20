@@ -4,8 +4,8 @@
 #SBATCH --ntasks=1
 #SBATCH --gpus=1
 #SBATCH --account=cu_0003
-#SBATCH --output=/dcai/users/schhau/git-repos/mllam-exps/logs/mllam-data-prep.%j.log
-#SBATCH --error=/dcai/users/schhau/git-repos/mllam-exps/logs/mllam-data-prep.%j.log
+#SBATCH --output=/dcai/users/%u/logs/neurallam.%j.log
+#SBATCH --error=/dcai/users/%u/logs/neurallam.%j.log
 
 echo "Started slurm job $SLURM_JOB_ID"
 
