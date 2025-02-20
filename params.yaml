@@ -20,22 +20,22 @@ baseline-defaults: &baseline-defaults  # defaults across training and evaluation
     - 2
     - 4
   metrics_watch: val_rmse, mse, random_metric
-  num_nodes: &num_nodes 2
+  num_nodes: &num_nodes 2  # creating a YAML anchor that is referenced also in the SLURM directives so only needs to be defined here
 
 baseline-eval:
-  <<: *baseline-defaults
-  num_nodes: 1
+  <<: *baseline-defaults           # insert all parameters set in baseline-defaults
+  num_nodes: &num_nodes_eval 1     # and overwrite the num_nodes parameter to make it evaluation stage specific
 
-slurm-defaults: &slurm-defaults
+slurm-defaults: &slurm-defaults    # SLURM directives, which gets passed to sbatch
   job-name: NeuralLam
   time: 1-00:00:00
-  nodes: *num_nodes
+  nodes: *num_nodes                # set in baseline-defaults section above and referenced here via alias
   ntasks-per-node: 8
   gres: gpu:8  #per node
-  no-requeue: true
+  no-requeue: true                 # becomes `--no-requeue`
   exclusive: true
   account: cu_0003
 
-slurm-eval:
+slurm-eval:                        # Overwriting SLURM defaults with evaluation stage specifics
   <<: *slurm-defaults
-  nodes: 1
+  nodes: *num_nodes_eval
