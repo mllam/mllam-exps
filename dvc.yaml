@@ -25,7 +25,7 @@ stages:
     - data/graph/
   train:
     cmd:
-    - sbatch -W ${slurm-defaults} machines/slurm.train.sh --config_path ./data/config.yaml --logger ${logger} --logger_project ${experiment} ${baseline-defaults}
+    - sbatch -W ${slurm-defaults} machines/slurm.train-neural-lam.sh --config_path ./data/config.yaml --logger ${logger} --logger_project ${experiment} ${baseline-defaults}
     deps:
     - version.mllam.txt
     - data/graph/
