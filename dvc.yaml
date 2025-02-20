@@ -1,4 +1,7 @@
 # dvc parameters listed under `vars` will not be tracked
+#  which is used to list settings that do not affect the
+#  training or evaluation of the model, e.g. which logger
+#  has been used.
 vars:
   - experiment: has_testing
   - logger: mlflow
