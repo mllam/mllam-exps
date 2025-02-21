@@ -24,10 +24,10 @@ OMP_NUM_THREADS=56
 OMPI_MCA_coll_hcoll_enable=0
 set +a
 
-echo "Using venv in ${VENV_PATH}"
+echo "Using venv in ${MLLAM_VENV_PATH}"
 
 # source the virtual environment so that the python script can be run
-source ${VENV_PATH}/bin/activate
+source ${MLLAM_VENV_PATH}/bin/activate
 
 # pass all arguments to the python script
 srun -ul python -m neural_lam.train_model "$@"
