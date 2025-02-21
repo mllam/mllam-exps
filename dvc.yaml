@@ -24,7 +24,7 @@ stages:
     - data/graph/
   train:
     cmd:
-    - VENV_PATH=${venv_path} sbatch -W ${slurm-defaults} machines/slurm.train.sh --config_path ./data/config.yaml --logger ${logger} --logger_project ${logger_project} ${baseline-defaults}
+    - VENV_PATH=${venv_path} sbatch -W ${slurm-defaults} machines/slurm.neural-lam.sh --config_path ./data/config.yaml --logger ${logger} --logger_project ${logger_project} ${baseline-defaults}
     deps:
     - version.mllam.txt
     - data/graph/
@@ -34,8 +34,8 @@ stages:
     - saved_models
   evaluate:
     cmd:
-    - VENV_PATH=${venv_path} sbatch -W ${slurm-eval} machines/slurm.train.sh --config_path ./data/config.yaml --eval val --load
-      ./saved_models/*/last.ckpt --logger mlflow --logger_project ${logger_project} ${baseline-eval}
+    - VENV_PATH=${venv_path} sbatch -W ${slurm-eval} machines/slurm.neural-lam.sh --config_path ./data/config.yaml --eval val --load
+      ./saved_models/*/last.ckpt --logger ${logger} --logger_project ${logger_project} ${baseline-eval}
     deps:
     - version.mllam.txt
     - data/graph/
