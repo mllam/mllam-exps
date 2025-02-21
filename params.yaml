@@ -1,8 +1,9 @@
 # This file contains parameters that are tracked by DVC.
 # 
 # Notes:
-# - YAML anchor (`&<alias>`) and aliases (`*<alias>`) can be used to define an "anchor"-value that can aliased (referenced) somewhere else in the yaml-file, thereby avoiding the need to repeat the definition of a variable in multiple places, .e.g.
-#     and ommit redundancy
+# - YAML anchor (`&<alias>`) and aliases (`*<alias>`) can be used to define an
+#     "anchor"-value that can aliased (referenced) somewhere else in the
+#     yaml-file, thereby avoiding redundancy
 # - YAML overwrites (`<<: *<alias>`) are used to insert default parameters into specific
 #     parameter sections and overwrite specific keys there
 # - Parameters set in this file are unpacked in `dvc.yaml` with e.g. ${baseline-defaults}

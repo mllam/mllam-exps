@@ -5,8 +5,10 @@
 vars:
   - logger: mlflow
 stages:
+  check_for_venv_path:
+    cmd: machines/check_for_venv_path.sh
   mllam_version:
-    cmd: source machines/environment.sh; python -c "from neural_lam import __version__; print(__version__)" > version.mllam.txt
+    cmd: '$MLLAM_VENV_PATH/bin/python -c "from neural_lam import __version__; print(__version__)" > version.mllam.txt'
   prepare_dataset:
     cmd: sbatch -W machines/slurm.mllam-data-prep.sh data/datastore.yaml --output data/datastore.zarr
     deps:
@@ -14,7 +16,7 @@ stages:
     outs:
     - data/datastore.zarr
   create_graph:
-    cmd: python -m neural_lam.create_graph --config_path data/config.yaml ${graph-defaults}
+    cmd: '$MLLAM_VENV_PATH/bin/python -m neural_lam.create_graph --config_path data/config.yaml ${graph-defaults}'
     params:
     - data/config.yaml:
       - datastore

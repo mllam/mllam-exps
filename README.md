@@ -57,6 +57,12 @@ export MLFLOW_TRACKING_PASSWORD=""
 #empty line
 ```
 
+Install neural-lam and dependencies into a virtual environment, and set the
+environment variable `MLLAM_VENV_PATH` to the path of the virtual environment, e.g.:
+```bash
+export MLLAM_VENV_PATH=/dcai/users/denlef/git-repos/mllam/mllam-exps/.venv
+```
+
 ### Sharing experiments and data
 To share experiments including models and metrics, a common remote needs to be defined. DVC supports a long list of
 remotes, but on a cluster system that potentially does not have access to the internet and e.g. S3 buckets,
