@@ -1,4 +1,8 @@
 [core]
     remote = localshare
+[cache]
+    dir = /dcai/projects/cu_0003/dvc_shared_cache
+    shared = group
+    type = symlink
 ['remote "localshare"']
     url = /dcai/projects/cu_0003/dvc/
