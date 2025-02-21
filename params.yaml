@@ -1,0 +1,60 @@
+# This file contains parameters that are tracked by DVC.
+# 
+# Notes:
+# - YAML anchor (`&<alias>`) and aliases (`*<alias>`) can be used to define an
+#     "anchor"-value that can aliased (referenced) somewhere else in the
+#     yaml-file, thereby avoiding redundancy
+# - YAML overwrites (`<<: *<alias>`) are used to insert default parameters into specific
+#     parameter sections and overwrite specific keys there
+# - Parameters set in this file are unpacked in `dvc.yaml` with e.g. ${baseline-defaults}
+#     resulting in each key being prepended with `--` making it possible to pass them as
+#     command line arguments to neural-lam
+#     (https://dvc.org/doc/user-guide/project-structure/dvcyaml-files#dictionary-unpacking)
+
+# the name of the "experiment" on mlflow that your run(s) will be grouped under
+# change this to something that describes what you'll be working on (for
+# example what the parameter study is about)
+logger-project: &logger-project A-baseline
+
+graph-defaults:
+  levels: 4
+  hierarchical: true
+  name: &graph_name hierarchical_4lvl  # defines an anchor `graph_name` with value `hierarchical_4lvl` that can then be reference elsewhere in the yaml-file with `*graph_name`
+
+baseline-defaults: &baseline-defaults  # defaults across training and evaluation stage, which get passed to python -m neural_lam.train_model
+  num_workers: 8 
+  batch_size: 1
+  hidden_dim: 128
+  precision: bf16-mixed
+  processor_layers: 4
+  model: hi_lam
+  graph: *graph_name
+  epochs: 30
+  ar_steps_train: 1
+  lr: 0.001
+  val_interval: 1
+  ar_steps_eval: 4
+  val_steps_to_log:
+    - 1
+    - 2
+    - 4
+  metrics_watch: val_rmse, mse, random_metric
+  num_nodes: &num_nodes 2  # creating a YAML anchor that is referenced also in the SLURM directives so only needs to be defined here
+
+baseline-eval:
+  <<: *baseline-defaults           # insert all parameters set in baseline-defaults
+  num_nodes: &num_nodes_eval 1     # and overwrite the num_nodes parameter to make it evaluation stage specific
+
+slurm-defaults: &slurm-defaults    # SLURM directives, which gets passed to sbatch
+  job-name: *logger-project
+  time: 1-00:00:00
+  nodes: *num_nodes                # set in baseline-defaults section above and referenced here via alias
+  ntasks-per-node: 8
+  gres: gpu:8  #per node
+  no-requeue: true                 # becomes `--no-requeue`
+  exclusive: true
+  account: cu_0003
+
+slurm-eval:                        # Overwriting SLURM defaults with evaluation stage specifics
+  <<: *slurm-defaults
+  nodes: *num_nodes_eval
