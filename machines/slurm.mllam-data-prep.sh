@@ -7,6 +7,7 @@
 #SBATCH --output=/dcai/users/%u/logs/neurallam.%j.log
 #SBATCH --error=/dcai/users/%u/logs/neurallam.%j.log
 
+cd ${DVC_WORKING_DIR}
 echo "Started slurm job $SLURM_JOB_ID"
 
 source machines/environment.sh
