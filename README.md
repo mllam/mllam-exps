@@ -58,7 +58,7 @@ export MLFLOW_TRACKING_PASSWORD=""
 ```
 
 Install neural-lam and dependencies into a virtual environment, and set the
-environment variable `MLLAM_VENV_PATH` to the path of the virtual environment:
+environment variable `MLLAM_VENV_PATH` to the path of the virtual environment, e.g.:
 ```bash
 export MLLAM_VENV_PATH=/dcai/users/denlef/git-repos/mllam/mllam-exps/.venv
 ```

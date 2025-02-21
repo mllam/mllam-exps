@@ -3,14 +3,13 @@
 # Notes:
 # - YAML anchor (`&<alias>`) and aliases (`*<alias>`) can be used to define an
 #     "anchor"-value that can aliased (referenced) somewhere else in the
-#     yaml-file, thereby avoid redundancy
+#     yaml-file, thereby avoiding redundancy
 # - YAML overwrites (`<<: *<alias>`) are used to insert default parameters into specific
 #     parameter sections and overwrite specific keys there
 # - Parameters set in this file are unpacked in `dvc.yaml` with e.g. ${baseline-defaults}
 #     resulting in each key being prepended with `--` making it possible to pass them as
 #     command line arguments to neural-lam
 #     (https://dvc.org/doc/user-guide/project-structure/dvcyaml-files#dictionary-unpacking)
-#     
 
 # the name of the "experiment" on mlflow that your run(s) will be grouped under
 # change this to something that describes what you'll be working on (for
