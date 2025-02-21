@@ -1,8 +1,9 @@
 # This file contains parameters that are tracked by DVC.
 # 
 # Notes:
-# - YAML anchor (`&<alias>`) and aliases (`*<alias>`) can be used to define an "anchor"-value that can aliased (referenced) somewhere else in the yaml-file, thereby avoiding the need to repeat the definition of a variable in multiple places, .e.g.
-#     and ommit redundancy
+# - YAML anchor (`&<alias>`) and aliases (`*<alias>`) can be used to define an
+#     "anchor"-value that can aliased (referenced) somewhere else in the
+#     yaml-file, thereby avoiding redundancy
 # - YAML overwrites (`<<: *<alias>`) are used to insert default parameters into specific
 #     parameter sections and overwrite specific keys there
 # - Parameters set in this file are unpacked in `dvc.yaml` with e.g. ${baseline-defaults}
@@ -13,7 +14,7 @@
 # the name of the "experiment" on mlflow that your run(s) will be grouped under
 # change this to something that describes what you'll be working on (for
 # example what the parameter study is about)
-logger_project: A-baseline
+logger-project: &logger-project A-baseline
 
 graph-defaults:
   levels: 4
@@ -45,7 +46,7 @@ baseline-eval:
   num_nodes: &num_nodes_eval 1     # and overwrite the num_nodes parameter to make it evaluation stage specific
 
 slurm-defaults: &slurm-defaults    # SLURM directives, which gets passed to sbatch
-  job-name: NeuralLam
+  job-name: *logger-project
   time: 1-00:00:00
   nodes: *num_nodes                # set in baseline-defaults section above and referenced here via alias
   ntasks-per-node: 8
