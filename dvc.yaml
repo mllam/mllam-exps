@@ -6,9 +6,9 @@ vars:
   - logger: mlflow
 stages:
   check_for_venv_path:
-    cmd: '[ -z "$MLLAM_VENV_PATH" ] && echo "Please set the MLLAM_VENV_PATH environment variable to path of the virtual environment where you have neural-lam etc installed" && exit 1 || echo "Using venv in $MLLAM_VENV_PATH"'
+    cmd: machines/check_for_venv_path.sh
   mllam_version:
-    cmd: ${MLLAM_VENV_PATH}/bin/python -c "from neural_lam import __version__; print(__version__)" > version.mllam.txt
+    cmd: '$MLLAM_VENV_PATH/bin/python -c "from neural_lam import __version__; print(__version__)" > version.mllam.txt'
   prepare_dataset:
     cmd: sbatch -W machines/slurm.mllam-data-prep.sh data/datastore.yaml --output data/datastore.zarr
     deps:
@@ -16,7 +16,7 @@ stages:
     outs:
     - data/datastore.zarr
   create_graph:
-    cmd: ${MLLAM_VENV_PATH}/bin/python -m neural_lam.create_graph --config_path data/config.yaml ${graph-defaults}
+    cmd: '$MLLAM_VENV_PATH/bin/python -m neural_lam.create_graph --config_path data/config.yaml ${graph-defaults}'
     params:
     - data/config.yaml:
       - datastore
