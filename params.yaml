@@ -19,7 +19,7 @@ logger_project: A-baseline
 # change this to the path of the virtual environment where you have installed
 # neural-lam and dependencies (creating the venv might become part of the dvc
 # pipeline in future, but for now you have to do this manually)
-venv_path: /dcai/users/schhau/git-repos/neural-lam/.venv/
+venv_path: /dcai/users/denlef/git-repos/mllam/mllam-exps/.venv
 
 
 graph-defaults:

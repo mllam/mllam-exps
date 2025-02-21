@@ -8,7 +8,7 @@ stages:
   mllam_version:
     cmd: ${venv_path}/bin/python -c "from neural_lam import __version__; print(__version__)" > version.mllam.txt
   prepare_dataset:
-    cmd: sbatch -W machines/slurm.mllam-data-prep.sh data/datastore.yaml --output data/datastore.zarr
+    cmd: VENV_PATH=${venv_path} sbatch -W machines/slurm.mllam-data-prep.sh data/datastore.yaml --output data/datastore.zarr
     deps:
     - data/datastore.yaml
     outs:
