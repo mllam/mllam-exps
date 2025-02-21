@@ -6,5 +6,3 @@ if [ -z "$MLLAM_VENV_PATH" ]; then
 else
   echo "Using venv in $MLLAM_VENV_PATH"
 fi
-
-export DVC_WORKING_DIR=$(pwd)
