@@ -4,7 +4,8 @@
 
 # chdir in the slurm directive is to make sure the gpu stats file is saved there
 # Then we cd to the actual working directory
-cd ${DVC_TEMP_DIR}
+
+cd ${DVC_WORKING_DIR}
 
 echo "Started slurm job $SLURM_JOB_ID"
 
