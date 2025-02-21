@@ -1,7 +1,6 @@
 #!/bin/bash -l
 #SBATCH --output=/dcai/users/%u/logs/neurallam.%j.log
 #SBATCH --error=/dcai/users/%u/logs/neurallam.%j.log
-#SBATCH --chdir=/dcai/users/%u/logs
 
 # chdir in the slurm directive is to make sure the gpu stats file is saved there
 # Then we cd to the actual working directory
