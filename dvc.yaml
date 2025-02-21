@@ -35,7 +35,7 @@ stages:
   evaluate:
     cmd:
     - sbatch -W ${slurm-eval} machines/slurm.neural-lam.sh --config_path ./data/config.yaml --eval val --load
-      ./saved_models/*/last.ckpt --logger ${logger} ${logger_project} ${baseline-eval}
+      ./saved_models/*/last.ckpt --logger ${logger} --logger_project ${logger_project} ${baseline-eval}
     deps:
     - version.mllam.txt
     - data/graph/
