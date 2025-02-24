@@ -1,0 +1,41 @@
+schema: '2.0'
+stages:
+  check_for_venv_path:
+    cmd: machines/check_for_venv_path.sh
+  mllam_version:
+    cmd: $MLLAM_VENV_PATH/bin/python -c "from neural_lam import __version__; print(__version__)"
+      > version.mllam.txt
+  prepare_dataset:
+    cmd: sbatch -W machines/slurm.mllam-data-prep.sh data/datastore.yaml --output
+      data/datastore.zarr
+    deps:
+    - path: data/datastore.yaml
+      hash: md5
+      md5: d959f30cc43c6cc641c2c1bb818e9101
+      size: 3822
+    outs:
+    - path: data/datastore.zarr
+      hash: md5
+      md5: 3746dfc9dbbe5bf46fcb931e0a23c43a.dir
+      size: 84282967066
+      nfiles: 11763
+  create_graph:
+    cmd: $MLLAM_VENV_PATH/bin/python -m neural_lam.create_graph --config_path data/config.yaml
+      --levels 4 --hierarchical --name hierarchical_4lvl
+    deps:
+    - path: data/datastore.zarr
+      hash: md5
+      md5: 3746dfc9dbbe5bf46fcb931e0a23c43a.dir
+      size: 84282967066
+      nfiles: 11763
+    params:
+      data/config.yaml:
+        datastore:
+          kind: mdp
+          config_path: ../data/datastore.yaml
+    outs:
+    - path: data/graph/
+      hash: md5
+      md5: eaa926f15fbd7ec50fcb407d03c3c80e.dir
+      size: 95585964
+      nfiles: 11
