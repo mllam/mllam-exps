@@ -5,3 +5,4 @@ wandb/
 data/datastore.zarr
 data/training
 machines/secrets.sh
+/mlruns

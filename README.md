@@ -28,28 +28,26 @@ mllam-exps
 │   ├── datastore.zarr  # output from the prepare dataset stage (not there initially)
 │   ├── graph  # output from the create graph stage (not there initially)
 │   ├── config.yaml  # configuration file for the Neural-LAM project
-│   ├── datastore.yaml  # configuration file for the data preparation stage via mllam-data-prep
-│   ├── training_params.yaml  # configuration file for the training stage
-│   └── evaluate_params.yaml  # configuration file for the evaluation stage
+│   └── datastore.yaml  # configuration file for the data preparation stage via mllam-data-prep
 ├── logs  # log files from SLURM jobs
 ├── machines  # machine configurations for the Neural-LAM project
 │   ├── environment.sh  # source environment incl. python modules
-│   ├── secrets.sh  # file containing some user specific secrets (DO NOT COMMIT!)
-│   └── slurm.evaluate.sh  # SLURM wrapper script for evaluation
+│   ├── check_for_venv_path.sh  # script to check if path to virtual python environment is set 
+│   ├── slurm.neural-lam.sh  # SLURM wrapper script for training and evaluation
+│   └── slurm.mllam-data-prep.sh  # SLURM wrapper script for mllam-data-prep
 ├── dvc.lock  # lock file for DVC containing checksums for the latest stages
 ├── dvc.yaml  # DVC pipeline definition
-├── train_wrapper.py  # wrapper script to allow neural-lam parameters be passed via DVC/params.yaml
+├── params.yaml  # Parameters to train and evaluate model, which are converted to command line arguments to neural_lam
 ├── version.mllam.txt  # Lock file for neural-lam version (external dependencies are not well supported by DVC)
 ```
 
 ## Setup
 To setup DVC, DVC needs to be installed:
 ```bash
-pip install dvc --target packages_dvc
-export PYTHONPATH=packages_dvc:$PYTHONPATH
+pip install dvc
 ```
 
-To be able to track experiments with MLflow, add your username and password to the file machines/secrets.sh:
+To be able to track experiments with MLflow, add your username and password to a `~/.bashrc`:
 ```
 #!/bin/bash
 export MLFLOW_TRACKING_USERNAME=""
@@ -58,10 +56,25 @@ export MLFLOW_TRACKING_PASSWORD=""
 ```
 
 Install neural-lam and dependencies into a virtual environment, and set the
-environment variable `MLLAM_VENV_PATH` to the path of the virtual environment:
+environment variable `MLLAM_VENV_PATH` to the path of the virtual environment, e.g.:
 ```bash
 export MLLAM_VENV_PATH=/dcai/users/denlef/git-repos/mllam/mllam-exps/.venv
 ```
+A good place for this is also the `~/.bashrc`
+
+### Sharing a DVC cache
+This repository is set up for a common DVC cache, which allows to automatically pull the results of stages and experiments
+someone else has already run. E.g. in the case of the baseline dataset, only the first person had to create this dataset
+for all other team members this dataset will be pulled automatically from cache.
+
+For the cache to work properly, ensure that you are using a group that all members are using, so that there won't be
+permission errors. A good way to ensure this, add the following to the `~/.bashrc`:
+
+```bash
+newgrp cu_0003
+```
+where `cu_0003` is the group that all team members belong to.
+>>>>>>> e329f428c5ff0ae368f94ad0fc3b3bcf26ca0cc9
 
 ### Sharing experiments and data
 To share experiments including models and metrics, a common remote needs to be defined. DVC supports a long list of
@@ -126,3 +139,22 @@ dvc queue start
 
 This will run the training stage with different hidden dimensions. The `--queue` option will create a sequence of experiments that
 are defined by changing the parameters on-the-fly defined in e.g. `data/training_params.yaml` with the `-S` option.
+
+>[!Info]
+>If a stage is failing and has been run via `--temp`, it is [currently not saved and lost](https://github.com/iterative/dvc/issues/10616).
+>Run your experiment therefore in the queue or workspace.
+
+
+### Restarting from a checkpoint
+To continue training on a previous experiment a few steps are necessary with the current setup:
+1. Checkout the experiment that shall be continued with `dvc exp apply <experiment_name/hash>`
+2. Persist the checkpoints in `saved_models` by adding the `persist: true` flag to the `train` and `evaluate` stage if not yet added.
+    This ensures that the checkpoints are not cleared between experiments as this would normally be done.
+3. Add `--load ./saved_models/*/last.ckpt --restore_opt` to the `train.cmd` to let neural-lam start from the checkpoint
+4. Patch neural_lam to read run_name from previous run, e.g. with https://github.com/mllam/neural-lam/commit/4927a5f73172a41a4f009ab3be6d36ffbec8f6dd
+    This ensures that the checkpoints are updated (dvc keeps tracks of the previous one if still needed) and we are never have several
+    subfolders in `saved_models` making `saved_models/*/last.ckpt` always unique.
+5. Increase the number of epochs in `params.yaml`. Remember that the number of epochs are absolute and not just relative to the last checkpoint.
+
+>[!Info]
+>This stage can currently only be run in the workspace and not via `--temp` or in the `queue` [Discord-Conversation](https://discord.com/channels/485586884165107732/563406153334128681/1343195392908726272)
