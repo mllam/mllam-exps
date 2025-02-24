@@ -2,6 +2,11 @@
 #SBATCH --output=/dcai/users/%u/logs/neurallam.%j.log
 #SBATCH --error=/dcai/users/%u/logs/neurallam.%j.log
 
+# chdir in the slurm directive is to make sure the gpu stats file is saved there
+# Then we cd to the actual working directory
+
+cd ${DVC_WORKING_DIR}
+
 echo "Started slurm job $SLURM_JOB_ID"
 
 export CARTOPY_DATA_DIR=/dcai/projects01/cu_0003/data/cartopy_features

@@ -10,7 +10,7 @@ stages:
   mllam_version:
     cmd: '$MLLAM_VENV_PATH/bin/python -c "from neural_lam import __version__; print(__version__)" > version.mllam.txt'
   prepare_dataset:
-    cmd: sbatch -W machines/slurm.mllam-data-prep.sh data/datastore.yaml --output data/datastore.zarr
+    cmd: export DVC_WORKING_DIR=$(pwd); sbatch -W --chdir ~/logs machines/slurm.mllam-data-prep.sh data/datastore.yaml --output data/datastore.zarr
     deps:
     - data/datastore.yaml
     outs:
@@ -26,7 +26,7 @@ stages:
     - data/graph/
   train:
     cmd:
-    - sbatch -W ${slurm-defaults} machines/slurm.neural-lam.sh --config_path ./data/config.yaml --logger ${logger} --logger-project ${logger-project} ${baseline-defaults}
+    - export DVC_WORKING_DIR=$(pwd); sbatch -W ${slurm-defaults} --chdir ~/logs machines/slurm.neural-lam.sh --config_path ./data/config.yaml --logger ${logger} --logger-project ${logger-project} ${baseline-defaults}
     deps:
     - version.mllam.txt
     - data/graph/
@@ -36,7 +36,7 @@ stages:
     - saved_models
   evaluate:
     cmd:
-    - sbatch -W ${slurm-eval} machines/slurm.neural-lam.sh --config_path ./data/config.yaml --eval val --load
+    - export DVC_WORKING_DIR=$(pwd); sbatch -W ${slurm-eval} --chdir ~/logs machines/slurm.neural-lam.sh --config_path ./data/config.yaml --eval val --load
       ./saved_models/*/last.ckpt --logger ${logger} --logger-project ${logger-project} ${baseline-eval}
     deps:
     - version.mllam.txt
