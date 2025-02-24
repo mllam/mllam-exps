@@ -74,7 +74,6 @@ permission errors. A good way to ensure this, add the following to the `~/.bashr
 newgrp cu_0003
 ```
 where `cu_0003` is the group that all team members belong to.
->>>>>>> e329f428c5ff0ae368f94ad0fc3b3bcf26ca0cc9
 
 ### Sharing experiments and data
 To share experiments including models and metrics, a common remote needs to be defined. DVC supports a long list of
