@@ -41,5 +41,5 @@ python machines/log_system_metrics_during_dataprep.py --config_path=${CONFIG_PAT
 
 srun -ul python -m mllam_data_prep "$@"
 
-# ensure the logger process has been killed
-while ps -p $LOGGER_PID > /dev/null; do sleep 1; done
+# kill the logger process, ensuring it has stopped before exiting
+while ps -p $LOGGER_PID > /dev/null; kill $LOGGER_PID; do sleep 1; done
