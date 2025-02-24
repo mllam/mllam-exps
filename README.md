@@ -71,7 +71,10 @@ For the cache to work properly, ensure that you are using a group that all membe
 permission errors. A good way to ensure this, add the following to the `~/.bashrc`:
 
 ```bash
-newgrp cu_0003
+# `newgrp` launches a new shell, so to avoid an infinite loop, check if the group is already set
+if [ "$(id -gn)" != "cu_0003" ]; then
+    newgrp cu_0003
+fi
 ```
 where `cu_0003` is the group that all team members belong to.
 
