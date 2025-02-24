@@ -6,6 +6,7 @@ import signal
 import sys
 import urllib3
 import os
+from pathlib import Path
 from loguru import logger
 
 # supress warnings about insecure requests to MLflow tracking server
@@ -13,22 +14,37 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 EXPERIMENT_NAME = "mllam-data-prep"
 
-def _calc_directory_size(directory):
-    """Calculate the size of a directory in bytes."""
+def _calc_directory_size(directory: str) -> int:
+    """
+    Calculate the size of a directory in bytes.
+
+    Parameters
+    ----------
+    directory : str
+        Path to the directory to calculate the size of.
+    
+    Returns
+    -------
+    int
+        Size of the directory in bytes.
+    """
     total = 0
-    with os.scandir(directory) as it:
-        for entry in it:
-            if entry.is_file():
-                try:
-                    total += os.path.getsize(entry.path)
-                except FileNotFoundError:
-                    # this can happen because dask writes temporary files that are deleted
-                    pass
-            elif entry.is_dir():
-                total += _calc_directory_size(entry.path)
+    fp_root = Path(directory)
+    if not fp_root.exists():
+        return 0
+
+    for entry in fp_root.rglob("*"):
+        if entry.is_file():
+            try:
+                total += os.path.getsize(entry)
+            except FileNotFoundError:
+                # this can happen because dask writes temporary files that are deleted
+                pass
     return total
 
-def main(config_path, dataset_output_path):
+
+
+def main(config_path: str, dataset_output_path: str):
     """
     Set up an MLflow experiment and log system metrics during data preparation.
     This doesn't actually do any "machine learning", but using mlflow to track
@@ -69,13 +85,14 @@ def main(config_path, dataset_output_path):
     # Register the signal handler for SIGINT (CTRL+C) and SIGTERM (kill command)
     signal.signal(signal.SIGINT, handle_exit)
     signal.signal(signal.SIGTERM, handle_exit)
+    
 
     try:
         step = 0  # Initialize step counter
         while True:
             # compute the size of the dataset and log it
             dataset_size = _calc_directory_size(dataset_output_path)
-            mlflow.log_metric("dataset_size_mb", dataset_size / 1024 / 1024, step=step)
+            mlflow.log_metric("dataset_size_bytes", dataset_size, step=step)
             step += 1  # Manually increment step counter
 
             time.sleep(10)  # Log every 10 seconds
