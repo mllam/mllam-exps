@@ -13,7 +13,6 @@ export CARTOPY_DATA_DIR=/dcai/projects01/cu_0003/data/cartopy_features
 export MLFLOW_TRACKING_URI="https://mlflow.dmi.dcs.dcai.dk" #sqlite:///mlflow.db #
 export MLFLOW_TRACKING_INSECURE_TLS=true
 
-source machines/secrets.sh
 source machines/environment.sh
 
 set -a
