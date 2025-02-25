@@ -35,7 +35,7 @@ echo "Using venv in ${MLLAM_VENV_PATH}"
 source ${MLLAM_VENV_PATH}/bin/activate
 
 # Check if 'eval' is in the arguments
-if [[ " $@ " == *" eval "* ]]; then
+if [[ " $@ " == *"--eval"* ]]; then
         MODE="eval"
     else
         MODE="train"
