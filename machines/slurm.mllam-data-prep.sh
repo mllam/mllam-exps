@@ -40,7 +40,7 @@ OUTPUT_PATH=$3
 
 python machines/log_system_metrics_during_dataprep.py --config_path=${CONFIG_PATH} --dataset_output_path=${OUTPUT_PATH} & LOGGER_PID=$! && disown
 
-srun -ul python -m mllam_data_prep "$@"
+srun -ul -K1 python -m mllam_data_prep "$@"
 
 # kill the logger process, ensuring it has stopped before exiting
 while ps -p $LOGGER_PID > /dev/null; kill $LOGGER_PID; do sleep 1; done
