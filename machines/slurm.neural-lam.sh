@@ -34,5 +34,12 @@ echo "Using venv in ${MLLAM_VENV_PATH}"
 # source the virtual environment so that the python script can be run
 source ${MLLAM_VENV_PATH}/bin/activate
 
+# Check if 'eval' is in the arguments
+if [[ " $@ " == *" eval "* ]]; then
+        MODE="eval"
+    else
+        MODE="train"
+fi
+
 # pass all arguments to the python script
-srun -ul -K1 python -m neural_lam.train_model --logger_run_name $DVC_EXP_NAME "$@"
+srun -ul -K1 python -m neural_lam.train_model --logger_run_name $MODE-$DVC_EXP_NAME "$@"
