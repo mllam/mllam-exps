@@ -35,4 +35,4 @@ echo "Using venv in ${MLLAM_VENV_PATH}"
 source ${MLLAM_VENV_PATH}/bin/activate
 
 # pass all arguments to the python script
-srun -ul -K1 python -m neural_lam.train_model "$@"
+srun -ul -K1 python -m neural_lam.train_model --logger_run_name $DVC_EXP_NAME "$@"
