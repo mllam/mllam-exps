@@ -72,8 +72,11 @@ permission errors. A good way to ensure this, add the following to the `~/.bashr
 
 ```bash
 # `newgrp` launches a new shell, so to avoid an infinite loop, check if the group is already set
-if [ "$(id -gn)" != "cu_0003" ]; then
-    newgrp cu_0003
+# Only run for interactive shells
+if [[ $- == *i* ]]; then
+    if [ "$(id -gn)" != "cu_0003" ]; then
+        newgrp cu_0003
+    fi
 fi
 ```
 where `cu_0003` is the group that all team members belong to.
